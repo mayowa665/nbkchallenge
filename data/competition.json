@@ -1,0 +1,12 @@
+{
+  "name": "NBK League",
+  "season_label": "2025/26",
+  "window_start": "2025-12-11T00:00:00Z",
+  "window_end": "2026-05-02T23:59:59Z",
+  "tracked_tlas": ["MUN", "ARS", "BRE", "TOT"],
+  "scoring": {
+    "exact": 3,
+    "result": 1,
+    "miss": 0
+  }
+}

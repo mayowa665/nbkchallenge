@@ -1,0 +1,6 @@
+[
+  {"id": 1, "home": "Arsenal", "away": "Man United", "home_tla": "ARS", "away_tla": "MUN", "kickoff_utc": "2020-12-13T15:00:00Z", "status": "FINISHED", "home_score": 2, "away_score": 1},
+  {"id": 2, "home": "Spurs", "away": "Brentford", "home_tla": "TOT", "away_tla": "BRE", "kickoff_utc": "2020-12-14T15:00:00Z", "status": "FINISHED", "home_score": 1, "away_score": 1},
+  {"id": 3, "home": "Brentford", "away": "Arsenal", "home_tla": "BRE", "away_tla": "ARS", "kickoff_utc": "2020-12-15T15:00:00Z", "status": "FINISHED", "home_score": 0, "away_score": 3},
+  {"id": 4, "home": "Man United", "away": "Spurs", "home_tla": "MUN", "away_tla": "TOT", "kickoff_utc": "2030-01-01T15:00:00Z", "status": "SCHEDULED", "home_score": null, "away_score": null}
+]

@@ -1,0 +1,52 @@
+name: Deploy NBK League
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * *"      # daily 06:00 UTC (after the previous day's matches finish)
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python -m compileall scripts
+      - name: Recompute table
+        # Skip on plain code pushes (deploy the committed state.json); the API + Supabase
+        # are only hit on the daily cron and manual runs, to spare the football-data quota.
+        if: github.event_name != 'push'
+        env:
+          FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/build_state.py --out state.json
+      - name: Stage static site
+        run: |
+          mkdir _site
+          cp index.html styles.css app.js favicon.svg config.js state.json _site/
+          touch _site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

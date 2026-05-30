@@ -1,0 +1,55 @@
+{
+  "updated_at": "2026-05-30T17:52:38Z",
+  "season_label": "2025/26",
+  "scoring": {
+    "exact": 3,
+    "result": 1,
+    "miss": 0
+  },
+  "played": 0,
+  "total": 0,
+  "table": [
+    {
+      "player": "Player 1",
+      "played": 0,
+      "predicted": 0,
+      "exact": 0,
+      "results": 0,
+      "points": 0,
+      "nbk": false,
+      "gap_to_safety": 0
+    },
+    {
+      "player": "Player 2",
+      "played": 0,
+      "predicted": 0,
+      "exact": 0,
+      "results": 0,
+      "points": 0,
+      "nbk": false,
+      "gap_to_safety": 0
+    },
+    {
+      "player": "Player 3",
+      "played": 0,
+      "predicted": 0,
+      "exact": 0,
+      "results": 0,
+      "points": 0,
+      "nbk": false,
+      "gap_to_safety": 0
+    },
+    {
+      "player": "Player 4",
+      "played": 0,
+      "predicted": 0,
+      "exact": 0,
+      "results": 0,
+      "points": 0,
+      "nbk": false,
+      "gap_to_safety": 0
+    }
+  ],
+  "fixtures": [],
+  "recent_results": []
+}

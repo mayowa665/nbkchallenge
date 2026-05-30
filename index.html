@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NBK League — Premier League Score Predictor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <div class="eyebrow">Don't finish last</div>
+      <h1>NBK <span>League</span></h1>
+      <div class="meta" id="meta"><span>Premier League</span><span>Score Predictor</span></div>
+    </header>
+
+    <section class="status-band" aria-live="polite">
+      <div><div class="status-label">Played</div><div id="played">—</div></div>
+      <div><div class="status-label">Updated</div><div id="updated">—</div></div>
+    </section>
+
+    <nav class="tabs" role="tablist" aria-label="Views">
+      <button class="tab active" id="tab-table"   data-tab="table"   role="tab" aria-selected="true"  aria-controls="view">Table</button>
+      <button class="tab"        id="tab-predict" data-tab="predict" role="tab" aria-selected="false" aria-controls="view">Predict</button>
+      <button class="tab"        id="tab-results" data-tab="results" role="tab" aria-selected="false" aria-controls="view">Results</button>
+    </nav>
+
+    <main id="view" role="tabpanel" aria-labelledby="tab-table">
+      <div class="empty-state">Loading…</div>
+    </main>
+
+    <footer>
+      3 pts exact score · 1 pt correct result · last place is <strong>NBK</strong><br>
+      <span id="season-foot"></span> · For entertainment
+    </footer>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>

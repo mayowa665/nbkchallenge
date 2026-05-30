@@ -1,0 +1,137 @@
+* { box-sizing: border-box; }
+html { overflow-y: scroll; }
+
+:root {
+  --bg: #f4ede2;
+  --bg-card: #fffaf2;
+  --bg-dark: #1a1a1a;
+  --ink: #1a1a1a;
+  --muted: #6b6258;
+  --line: rgba(26, 26, 26, 0.18);
+  --accent: #c41e3a;
+  --gold: #d4a72c;
+  --danger: #c41e3a;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "DM Sans", Arial, sans-serif;
+  padding: 24px 16px 48px;
+}
+.wrapper { max-width: 920px; margin: 0 auto; }
+
+header { text-align: center; padding: 12px 0 22px; border-bottom: 2px solid var(--ink); }
+.eyebrow {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 10px;
+}
+h1 { margin: 0; font-family: "Bebas Neue", Impact, sans-serif; font-size: clamp(44px, 9vw, 82px); line-height: 0.9; letter-spacing: 0.02em; }
+h1 span { color: var(--accent); }
+.meta {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 0; margin-top: 12px;
+  font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+}
+.meta span:not(:last-child)::after { content: "/"; margin: 0 10px; color: var(--accent); }
+
+.status-band { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 2px solid var(--ink); }
+.status-band > div { padding: 12px 16px; border-right: 1px solid var(--line); text-align: center; min-width: 0; }
+.status-band > div:last-child { border-right: 0; }
+.status-label { font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+
+.tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 2px solid var(--ink); margin-bottom: 26px; }
+.tab {
+  position: relative; border: 0; background: transparent; color: var(--muted); cursor: pointer;
+  font-family: "Bebas Neue", Impact, sans-serif; font-size: 19px; letter-spacing: 0.1em; padding: 15px 8px 18px;
+}
+.tab::after { content: ""; position: absolute; left: 18px; right: 18px; bottom: 6px; height: 4px; background: transparent; }
+.tab.active { color: var(--ink); }
+.tab.active::after { background: var(--accent); }
+
+.section-head { text-align: center; margin-bottom: 16px; }
+.section-head h2 { margin: 0; font-family: "Bebas Neue", Impact, sans-serif; font-size: 32px; line-height: 1; }
+.section-head p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+
+/* League table */
+.table { border: 2px solid var(--ink); background: var(--bg-card); }
+.trow {
+  display: grid; grid-template-columns: 34px 1fr 54px 54px 64px; gap: 10px; align-items: center;
+  padding: 13px 14px; border-bottom: 1px solid var(--line);
+}
+.trow:last-child { border-bottom: 0; }
+.trow.head { background: var(--bg-dark); color: var(--bg); font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; }
+.trow.nbk { background: rgba(196, 30, 58, 0.10); }
+.t-rank { font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--muted); }
+.t-name { font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.t-name .nbk-badge {
+  font-family: "IBM Plex Mono", monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.12em;
+  color: #fff; background: var(--danger); padding: 2px 6px; border-radius: 3px; flex-shrink: 0;
+}
+.t-sub { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--muted); text-align: right; }
+.t-pts { font-family: "Bebas Neue", Impact, sans-serif; font-size: 26px; text-align: right; letter-spacing: 0.03em; }
+.t-gap { font-family: "IBM Plex Mono", monospace; font-size: 10px; color: var(--danger); text-align: center; }
+
+/* Predict form */
+.panel { border: 2px solid var(--ink); background: var(--bg-card); padding: 16px; }
+.identity { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-bottom: 16px; align-items: end; }
+.field label { display: block; font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.field select, .field input {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--ink); background: var(--bg);
+  font-family: "IBM Plex Mono", monospace; font-size: 14px; color: var(--ink);
+}
+.field select:focus, .field input:focus { outline: none; border-color: var(--accent); }
+
+button.action {
+  font-family: "Bebas Neue", Impact, sans-serif; font-size: 18px; letter-spacing: 0.08em;
+  padding: 11px 20px; background: var(--ink); color: var(--bg); border: 2px solid var(--ink); cursor: pointer;
+  transition: all 0.15s ease; white-space: nowrap;
+}
+button.action:hover, button.action:focus-visible { background: var(--accent); border-color: var(--accent); transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--ink); outline: none; }
+button.action.secondary { background: transparent; color: var(--ink); }
+button.action:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.pred-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; padding: 12px 4px; border-bottom: 1px dashed var(--line); }
+.pred-row:last-of-type { border-bottom: 0; }
+.pred-team { font-weight: 500; min-width: 0; }
+.pred-team.away { text-align: right; }
+.pred-score { display: flex; align-items: center; gap: 6px; }
+.pred-score input { width: 46px; text-align: center; padding: 8px 4px; border: 1px solid var(--ink); background: var(--bg); font-family: "IBM Plex Mono", monospace; font-size: 16px; }
+.pred-score span { color: var(--muted); font-family: "IBM Plex Mono", monospace; }
+.pred-when { grid-column: 1 / -1; font-family: "IBM Plex Mono", monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+.save-bar { display: flex; gap: 10px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
+.msg { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.04em; min-height: 16px; }
+.msg.ok { color: #2e8b3d; }
+.msg.err { color: var(--danger); }
+
+/* Results */
+.match { border: 1px solid var(--line); background: var(--bg-card); margin-bottom: 10px; }
+.match-top { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+.match-top .home { font-weight: 700; }
+.match-top .away { font-weight: 700; text-align: right; }
+.match-score { font-family: "Bebas Neue", Impact, sans-serif; font-size: 26px; letter-spacing: 0.06em; }
+.match-score.live { color: var(--accent); }
+.match-date { grid-column: 1 / -1; text-align: center; font-family: "IBM Plex Mono", monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 4px; }
+.picks { display: grid; gap: 6px; padding: 10px 14px; }
+.pick { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; font-size: 13px; }
+.pick .who { color: var(--muted); }
+.pick .guess { font-family: "IBM Plex Mono", monospace; }
+.pick .pts { font-family: "IBM Plex Mono", monospace; font-weight: 600; text-align: right; min-width: 46px; }
+.pick .pts.p3 { color: #2e8b3d; }
+.pick .pts.p1 { color: var(--gold); }
+.pick .pts.p0 { color: var(--muted); }
+
+.empty-state { padding: 24px; text-align: center; color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; border: 2px dashed var(--line); }
+.notice { padding: 16px; border: 2px dashed var(--accent); background: var(--bg-card); color: var(--ink); font-size: 13px; margin-bottom: 16px; }
+
+footer { margin-top: 40px; padding-top: 18px; border-top: 2px solid var(--ink); text-align: center; color: var(--muted); font-size: 12px; line-height: 1.7; font-family: "IBM Plex Mono", monospace; letter-spacing: 0.06em; }
+footer strong { color: var(--danger); }
+
+@media (max-width: 560px) {
+  .trow { grid-template-columns: 26px 1fr 64px; }
+  .t-sub { display: none; }
+  .identity { grid-template-columns: 1fr 1fr; }
+  .identity .field.full { grid-column: 1 / -1; }
+}
