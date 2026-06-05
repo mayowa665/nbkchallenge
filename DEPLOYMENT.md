@@ -1,14 +1,17 @@
 # Deployment — step by step
 
 Three free services, ~20 minutes, then it runs itself: **Supabase** (stores predictions),
-**GitHub** (hosts the page + runs the daily update), **football-data.org** (results feed).
+**GitHub** (hosts the page + runs the daily update), **API-Football** (results feed — covers the
+Premier League, FA Cup and Carabao Cup on its free plan).
 
 ---
 
 ## Part 1 — Edit the two data files first
 1. `data/players.json` — replace the placeholders with your 4 players' names.
-2. `data/competition.json` — check `window_start` / `window_end` (default 11 Dec 2025 → 2 May 2026)
-   and `tracked_tlas` (`MUN`, `ARS`, `BRE`, `TOT`). Adjust the season year if needed.
+2. `data/competition.json` — check `window_start` / `window_end` (default 11 Dec 2025 → 2 May 2026),
+   `tracked_team_ids` (33 Man Utd, 42 Arsenal, 55 Brentford, 47 Spurs), `competitions`
+   (39 PL, 45 FA Cup, 48 Carabao Cup) and `api_football_season` (2025 for 2025/26).
+   You can confirm these against the live feed in Part 4 with `python scripts/check_apifootball.py`.
 
 ---
 
@@ -42,16 +45,25 @@ This file is public — that's fine. The anon key can only call the two locked-d
 
 ---
 
-## Part 4 — football-data.org key
-Reuse the key from the World Cup site, or get a fresh free one at
-**https://www.football-data.org/client/register** (the free tier includes the Premier League).
+## Part 4 — API-Football key
+1. Sign up free at **https://www.api-football.com/** (or via the dashboard at
+   **https://dashboard.api-football.com/register**). The free plan covers the Premier League,
+   FA Cup and Carabao Cup (≈100 requests/day; this site uses ~4/day).
+2. Copy your API key from the dashboard.
+3. (Recommended) Verify the ids are right before deploying:
+   ```powershell
+   $env:API_FOOTBALL_KEY="...your key..."
+   python scripts/check_apifootball.py
+   ```
+   It should print "Man Utd", "Arsenal", "Brentford", "Spurs" with some of their PL/cup fixtures.
+   If a wrong club shows, fix that id in `data/competition.json`.
 
 ---
 
 ## Part 5 — GitHub
 1. Create a new **public** repo and push this folder to `main`.
 2. **Settings → Secrets and variables → Actions → New repository secret**, add three:
-   - `FOOTBALL_DATA_API_KEY` — your football-data token
+   - `API_FOOTBALL_KEY` — your API-Football key
    - `SUPABASE_URL` — the Project URL
    - `SUPABASE_SERVICE_KEY` — the **service_role** key
 3. **Settings → Pages → Build and deployment → Source = GitHub Actions**.

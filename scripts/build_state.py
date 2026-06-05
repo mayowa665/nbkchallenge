@@ -42,7 +42,9 @@ def main() -> None:
         fixtures = load_json(Path(args.fixtures))
     else:
         fixtures = fetch_fixtures(
-            competition["tracked_tlas"],
+            competition["tracked_team_ids"],
+            competition["competitions"],
+            competition["api_football_season"],
             competition["window_start"],
             competition["window_end"],
         )
@@ -106,6 +108,8 @@ def fixtures_view(
             {
                 "id": fixture["id"],
                 "matchday": fixture.get("matchday"),
+                "competition": fixture.get("competition"),
+                "group_label": fixture.get("group_label"),
                 "home": fixture["home"],
                 "away": fixture["away"],
                 "kickoff_utc": fixture["kickoff_utc"],

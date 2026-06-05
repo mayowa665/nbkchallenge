@@ -73,27 +73,30 @@ function wireTable() {
 const POINT_EMOJI = { 0: "0️⃣", 1: "1️⃣", 3: "3️⃣" };
 function pointEmoji(p) { return POINT_EMOJI[p] != null ? POINT_EMOJI[p] : String(p); }
 
+function groupLabel(f) {
+  return f.group_label || (f.matchday ? `Week ${f.matchday}` : "Fixtures");
+}
+
 function resultsView() {
   const head = `<div class="section-head"><h2>Scorecards</h2><p>Negative Ball Knowledge</p></div>`;
   const played = state.fixtures.filter(f => f.kicked_off && f.finished);
   if (played.length === 0) return head + `<div class="empty-state">No games played yet.</div>`;
 
-  const weeks = {};
-  played.forEach(f => {
-    const md = f.matchday != null ? f.matchday : 0;
-    (weeks[md] = weeks[md] || []).push(f);
-  });
-  const order = Object.keys(weeks).map(Number).sort((a, b) => b - a); // most recent week first
+  const groups = {};
+  played.forEach(f => { const k = groupLabel(f); (groups[k] = groups[k] || []).push(f); });
   const players = (state.players && state.players.length) ? state.players : state.table.map(r => r.player);
 
-  return head + order.map(md => {
-    const fixtures = weeks[md].slice().sort((a, b) => a.kickoff_utc.localeCompare(b.kickoff_utc));
-    return weekCard(md, fixtures, players);
+  // most recent group first (by latest kickoff in the group)
+  const latest = label => Math.max(...groups[label].map(f => Date.parse(f.kickoff_utc)));
+  const order = Object.keys(groups).sort((a, b) => latest(b) - latest(a));
+
+  return head + order.map(label => {
+    const fixtures = groups[label].slice().sort((a, b) => a.kickoff_utc.localeCompare(b.kickoff_utc));
+    return weekCard(label, fixtures, players);
   }).join("");
 }
 
-function weekCard(md, fixtures, players) {
-  const title = md ? `Week ${md}` : "Fixtures";
+function weekCard(title, fixtures, players) {
   const resultsLine = fixtures
     .map(f => `${escapeHtml(f.home)} ${f.home_score}-${f.away_score} ${escapeHtml(f.away)}`)
     .join("&nbsp;&nbsp;·&nbsp;&nbsp;");
@@ -152,7 +155,7 @@ function predictView() {
         <input type="number" min="0" max="30" inputmode="numeric" class="pa" aria-label="${escapeHtml(f.away)} score">
       </div>
       <div class="pred-team away">${escapeHtml(f.away)}</div>
-      <div class="pred-when">${fmtKickoff(f.kickoff_utc)}</div>
+      <div class="pred-when">${f.group_label ? escapeHtml(f.group_label) + " · " : ""}${fmtKickoff(f.kickoff_utc)}</div>
     </div>`).join("");
 
   return `
