@@ -137,6 +137,11 @@ grant select on public.fixtures to anon;
 grant execute on function public.submit_prediction(text, text, int, int, int) to anon;
 grant execute on function public.my_predictions(text, text) to anon;
 
+-- The GitHub Action authenticates as service_role (via the secret key). Newer Supabase
+-- projects don't auto-grant table access to service_role, so grant it explicitly for the
+-- tables the Action reads/writes directly (it bypasses RLS, but still needs the grant).
+grant select, insert, update, delete on public.fixtures, public.predictions to service_role;
+
 -- ---------------------------------------------------------------------------
 -- FINAL STEP — set your shared PIN (change 'changeme' to your chosen PIN):
 --   insert into public.app_config (id, pin_hash)
