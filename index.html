@@ -18,9 +18,16 @@
       <div class="meta" id="meta"><span>Premier League</span><span>Score Predictor</span></div>
     </header>
 
-    <section class="status-band" aria-live="polite">
-      <div><div class="status-label">Played</div><div id="played">—</div></div>
-      <div><div class="status-label">Updated</div><div id="updated">—</div></div>
+    <section class="progress" aria-live="polite">
+      <div class="progress-ends">
+        <span id="startDate">—</span>
+        <span id="endDate">—</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-foot">
+        <span id="progressLabel">—</span>
+        <span id="updated">—</span>
+      </div>
     </section>
 
     <nav class="tabs" role="tablist" aria-label="Views">
@@ -34,8 +41,7 @@
     </main>
 
     <footer>
-      3 pts exact score · 1 pt correct result · last place is <strong>NBK</strong><br>
-      <span id="season-foot"></span> · For entertainment
+      <span id="season-foot"></span>
     </footer>
   </div>
 

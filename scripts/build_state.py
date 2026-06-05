@@ -60,6 +60,9 @@ def main() -> None:
     state = {
         "updated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
         "season_label": competition.get("season_label", ""),
+        "window_start": competition.get("window_start"),
+        "window_end": competition.get("window_end"),
+        "players": players,
         "scoring": scoring,
         "played": sum(1 for f in fixtures if is_finished(f)),
         "total": len(fixtures),
@@ -102,6 +105,7 @@ def fixtures_view(
         view.append(
             {
                 "id": fixture["id"],
+                "matchday": fixture.get("matchday"),
                 "home": fixture["home"],
                 "away": fixture["away"],
                 "kickoff_utc": fixture["kickoff_utc"],

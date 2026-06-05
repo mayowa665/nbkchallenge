@@ -68,6 +68,7 @@ def fetch_fixtures(
         fixtures.append(
             {
                 "id": int(match["id"]),
+                "matchday": match.get("matchday"),
                 "home": _display_name(home),
                 "away": _display_name(away),
                 "home_tla": home_tla,

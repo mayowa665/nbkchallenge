@@ -40,55 +40,94 @@ function ptsClass(p) { return p === 3 ? "p3" : p === 1 ? "p1" : "p0"; }
 function tableView() {
   const rows = state.table.map((r, i) => {
     const badge = r.nbk ? `<span class="nbk-badge">NBK</span>` : "";
-    const gap = r.nbk && r.gap_to_safety > 0
-      ? `${r.gap_to_safety} off safety` : (r.nbk ? "rock bottom" : "");
+    const missed = Math.max(0, r.played - r.predicted);
     return `
-      <div class="trow ${r.nbk ? "nbk" : ""}">
+      <div class="trow player ${r.nbk ? "nbk" : ""}" data-i="${i}">
         <div class="t-rank">${String(i + 1).padStart(2, "0")}</div>
         <div class="t-name">${escapeHtml(r.player)} ${badge}</div>
-        <div class="t-sub">${r.exact}×3</div>
-        <div class="t-sub">${r.results}×1</div>
         <div class="t-pts">${r.points}</div>
-        ${r.nbk ? `<div class="t-gap" style="grid-column:1/-1">${gap}</div>` : ""}
+        <div class="t-breakdown"><div class="bd">
+          <span><b>${r.predicted}</b>/${r.played} predicted</span>
+          <span><b>${r.exact}</b> exact <span class="x">&times;3</span></span>
+          <span><b>${r.results}</b> results <span class="x">&times;1</span></span>
+          <span><b>${missed}</b> missed</span>
+        </div></div>
       </div>`;
   }).join("");
   return `
-    <div class="section-head"><h2>League Table</h2>
-      <p>${state.played > 0 ? "Lowest points = NBK" : "No games scored yet"}</p></div>
+    <div class="section-head"><h2>League Table</h2></div>
     <div class="table">
-      <div class="trow head"><div>#</div><div>Player</div><div>Exact</div><div>Result</div><div>Pts</div></div>
+      <div class="trow head"><div>#</div><div>Player</div><div>Pts</div></div>
       ${rows}
-    </div>`;
+    </div>
+    <p class="hint">Tap a player for their points breakdown</p>`;
+}
+
+function wireTable() {
+  document.querySelectorAll("#view .trow.player").forEach(row => {
+    row.addEventListener("click", () => row.classList.toggle("open"));
+  });
 }
 
 // ---------- Results ----------
+const POINT_EMOJI = { 0: "0️⃣", 1: "1️⃣", 3: "3️⃣" };
+function pointEmoji(p) { return POINT_EMOJI[p] != null ? POINT_EMOJI[p] : String(p); }
+
 function resultsView() {
-  const played = state.fixtures.filter(f => f.kicked_off).reverse();
-  if (played.length === 0) return `<div class="empty-state">No games played yet.</div>`;
-  return `<div class="section-head"><h2>Results</h2><p>Scores and everyone's picks</p></div>` +
-    played.map(matchCard).join("");
+  const head = `<div class="section-head"><h2>Scorecards</h2><p>Negative Ball Knowledge</p></div>`;
+  const played = state.fixtures.filter(f => f.kicked_off && f.finished);
+  if (played.length === 0) return head + `<div class="empty-state">No games played yet.</div>`;
+
+  const weeks = {};
+  played.forEach(f => {
+    const md = f.matchday != null ? f.matchday : 0;
+    (weeks[md] = weeks[md] || []).push(f);
+  });
+  const order = Object.keys(weeks).map(Number).sort((a, b) => b - a); // most recent week first
+  const players = (state.players && state.players.length) ? state.players : state.table.map(r => r.player);
+
+  return head + order.map(md => {
+    const fixtures = weeks[md].slice().sort((a, b) => a.kickoff_utc.localeCompare(b.kickoff_utc));
+    return weekCard(md, fixtures, players);
+  }).join("");
 }
-function matchCard(f) {
-  const scoreTxt = f.home_score != null ? `${f.home_score}–${f.away_score}` : "LIVE";
-  const picks = (f.picks || []).map(p => {
-    const pts = p.points;
-    const ptsHtml = pts == null ? "" : `<span class="pts ${ptsClass(pts)}">${pts} pt${pts === 1 ? "" : "s"}</span>`;
-    return `<div class="pick">
-      <span class="who">${escapeHtml(p.player)}</span>
-      <span class="guess">${p.home_pred}–${p.away_pred}</span>
-      ${ptsHtml}
+
+function weekCard(md, fixtures, players) {
+  const title = md ? `Week ${md}` : "Fixtures";
+  const resultsLine = fixtures
+    .map(f => `${escapeHtml(f.home)} ${f.home_score}-${f.away_score} ${escapeHtml(f.away)}`)
+    .join("&nbsp;&nbsp;·&nbsp;&nbsp;");
+
+  const pickByFixture = {};
+  fixtures.forEach(f => {
+    const m = {};
+    (f.picks || []).forEach(p => { m[p.player] = p; });
+    pickByFixture[f.id] = m;
+  });
+
+  const cards = players.map(player => {
+    let wk = 0;
+    const lines = fixtures.map(f => {
+      const pick = pickByFixture[f.id][player];
+      const pts = pick ? (pick.points || 0) : 0;
+      wk += pts;
+      const score = pick ? `${pick.home_pred}-${pick.away_pred}` : "X-X";
+      const cls = pick ? "" : "missed";
+      return `<div class="sc-line">
+        <span class="sc-fixture ${cls}">${escapeHtml(f.home)}<b class="sc-score">${score}</b>${escapeHtml(f.away)}</span>
+        <span class="pt-emoji" title="${pts} pt${pts === 1 ? "" : "s"}">${pointEmoji(pts)}</span>
+      </div>`;
+    }).join("");
+    return `<div class="scorecard">
+      <div class="scorecard-name">${escapeHtml(player)}<span class="wk-pts">${wk} pt${wk === 1 ? "" : "s"}</span></div>
+      ${lines}
     </div>`;
   }).join("");
-  return `
-    <div class="match">
-      <div class="match-top">
-        <div class="home">${escapeHtml(f.home)}</div>
-        <div class="match-score ${f.finished ? "" : "live"}">${scoreTxt}</div>
-        <div class="away">${escapeHtml(f.away)}</div>
-        <div class="match-date">${fmtKickoff(f.kickoff_utc)}</div>
-      </div>
-      ${picks ? `<div class="picks">${picks}</div>` : `<div class="picks"><div class="pick"><span class="who">No predictions</span></div></div>`}
-    </div>`;
+
+  return `<div class="week">
+    <div class="week-head"><div class="week-title">${title}</div><div class="week-results">${resultsLine}</div></div>
+    ${cards}
+  </div>`;
 }
 
 // ---------- Predict ----------
@@ -199,11 +238,24 @@ function setTab(tab) {
   if (!state) return;
   view.innerHTML = VIEWS[tab]();
   if (tab === "predict") wirePredict();
+  if (tab === "table") wireTable();
+}
+
+function fmtDate(iso) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  // Format in UTC so the configured calendar date doesn't shift by viewer timezone.
+  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(d);
 }
 
 function renderMeta() {
-  document.getElementById("played").textContent = `${state.played} of ${state.total}`;
-  document.getElementById("updated").textContent = fmtRelative(state.updated_at);
+  document.getElementById("startDate").textContent = fmtDate(state.window_start);
+  document.getElementById("endDate").textContent = fmtDate(state.window_end);
+  const pct = state.total > 0 ? Math.round((state.played / state.total) * 100) : 0;
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("progressLabel").textContent =
+    state.total > 0 ? `${state.played} of ${state.total} games · ${pct}%` : "Not started";
+  document.getElementById("updated").textContent = "Updated " + fmtRelative(state.updated_at);
   const foot = document.getElementById("season-foot");
   if (foot) foot.textContent = state.season_label ? `Season ${state.season_label}` : "";
 }
