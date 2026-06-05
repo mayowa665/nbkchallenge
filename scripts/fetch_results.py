@@ -1,156 +1,90 @@
-"""Pull the tracked teams' fixtures from API-Football (api-sports.io).
+"""Pull the tracked teams' Premier League fixtures from football-data.org.
 
-Free plan covers every competition, so a single key gives us the Premier League,
-FA Cup and Carabao Cup (EFL Cup). We fetch per tracked team (one call each), keep
-the configured competitions, and tag each game with a scorecard group label.
+The free tier covers the Premier League (competition code PL). We track teams by
+their `tla` (MUN/ARS/BRE/TOT). Cup games aren't on this feed (or any free one) —
+they come from data/manual_fixtures.json, merged in build_state.
 """
 
 import json
 import os
-import re
 from datetime import datetime, timezone
 from typing import Any, Optional
 
 import requests
 
-API_BASE = "https://v3.football.api-sports.io"
-FINISHED_STATUSES = {"FT", "AET", "PEN"}
-LIVE_STATUSES = {"1H", "2H", "HT", "ET", "BT", "P", "LIVE", "INT", "SUSP"}
+PL_MATCHES_URL = "https://api.football-data.org/v4/competitions/PL/matches"
 
-# Preferred display names. API-Football already uses short forms for most clubs;
-# this just overrides the few we want different (edit data/display_names.json).
+# Preferred display names by tla (edit data/display_names.json).
 _NAMES_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "display_names.json")
 try:
     with open(_NAMES_PATH, "r", encoding="utf-8") as _fh:
-        _RAW_NAMES = json.load(_fh)
+        DISPLAY_NAMES = json.load(_fh)
 except Exception:  # noqa: BLE001
-    _RAW_NAMES = {}
-
-
-def _norm(name: str) -> str:
-    text = re.sub(r"\b(fc|afc)\b", " ", str(name).lower())
-    return re.sub(r"[^a-z0-9]+", "", text)
-
-
-_NAMES = {_norm(k): v for k, v in _RAW_NAMES.items()}
-
-
-def _display_name(name: str) -> str:
-    return _NAMES.get(_norm(name), name)
+    DISPLAY_NAMES = {}
 
 
 def _parse_iso(value: str) -> datetime:
     return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
-def _to_utc_iso(value: str) -> str:
-    return _parse_iso(value).astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-
-def _request(path: str, params: dict, key: str) -> dict:
-    response = requests.get(
-        f"{API_BASE}{path}", headers={"x-apisports-key": key}, params=params, timeout=30
-    )
-    response.raise_for_status()
-    data = response.json()
-    errors = data.get("errors")
-    if errors:  # API-Football reports auth/quota problems here, often with HTTP 200
-        raise RuntimeError(f"API-Football error: {errors}")
-    return data
+def _display_name(team: dict[str, Any]) -> str:
+    tla = (team.get("tla") or "").upper()
+    if tla in DISPLAY_NAMES:
+        return DISPLAY_NAMES[tla]
+    return team.get("shortName") or team.get("name") or tla or "?"
 
 
 def fetch_fixtures(
-    tracked_team_ids: list[int],
-    competitions: dict[str, str],
-    season: int,
+    tracked_tlas: list[str],
     window_start: str,
     window_end: str,
 ) -> list[dict[str, Any]]:
-    """Fixtures for the tracked teams in the configured comps, inside the window.
-
-    Returns [] if no API key is set, so the pipeline still runs offline.
-    """
-    key = os.getenv("API_FOOTBALL_KEY")
-    if not key:
+    """PL fixtures involving a tracked team, inside the window. [] if no API key."""
+    token = os.getenv("FOOTBALL_DATA_API_KEY")
+    if not token:
         return []
 
-    comp_labels = {int(cid): label for cid, label in competitions.items()}
+    response = requests.get(PL_MATCHES_URL, headers={"X-Auth-Token": token}, timeout=30)
+    response.raise_for_status()
+
+    tracked = {t.upper() for t in tracked_tlas}
     start, end = _parse_iso(window_start), _parse_iso(window_end)
 
-    by_id: dict[int, dict[str, Any]] = {}
-    for team_id in tracked_team_ids:
-        data = _request("/fixtures", {"team": team_id, "season": season}, key)
-        rows = data.get("response", [])
-        if not rows:
-            raise RuntimeError(
-                f"API-Football returned no fixtures for team id {team_id} "
-                f"(check tracked_team_ids / api_football_season / the API key)."
-            )
-        for item in rows:
-            league_id = (item.get("league") or {}).get("id")
-            if league_id not in comp_labels:
-                continue
-            fixture = _to_fixture(item, comp_labels[league_id], league_id)
-            if fixture is None:
-                continue
-            kickoff = _parse_iso(fixture["kickoff_utc"])
-            if start <= kickoff <= end:
-                by_id[fixture["id"]] = fixture
+    fixtures = []
+    for match in response.json().get("matches", []):
+        home, away = match.get("homeTeam") or {}, match.get("awayTeam") or {}
+        home_tla = (home.get("tla") or "").upper()
+        away_tla = (away.get("tla") or "").upper()
+        if home_tla not in tracked and away_tla not in tracked:
+            continue
 
-    fixtures = sorted(by_id.values(), key=lambda f: f["kickoff_utc"])
+        utc_date = match.get("utcDate")
+        if not utc_date:
+            continue
+        kickoff = _parse_iso(utc_date)
+        if not (start <= kickoff <= end):
+            continue
+
+        status = match.get("status", "SCHEDULED")
+        full_time = (match.get("score") or {}).get("fullTime") or {}
+        matchday = match.get("matchday")
+        fixtures.append(
+            {
+                "id": int(match["id"]),
+                "competition": "Premier League",
+                "matchday": matchday,
+                "group_label": f"Week {matchday}" if matchday else "Premier League",
+                "home": _display_name(home),
+                "away": _display_name(away),
+                "kickoff_utc": utc_date,
+                "status": status,
+                "home_score": full_time.get("home") if status == "FINISHED" else None,
+                "away_score": full_time.get("away") if status == "FINISHED" else None,
+            }
+        )
+
+    fixtures.sort(key=lambda f: f["kickoff_utc"])
     return fixtures
-
-
-def _to_fixture(item: dict, competition: str, league_id: int) -> Optional[dict[str, Any]]:
-    fixture = item.get("fixture") or {}
-    teams = item.get("teams") or {}
-    home, away = teams.get("home") or {}, teams.get("away") or {}
-    date = fixture.get("date")
-    if not date or not home.get("name") or not away.get("name"):
-        return None
-
-    status_short = (fixture.get("status") or {}).get("short", "NS")
-    if status_short in FINISHED_STATUSES:
-        status = "FINISHED"
-    elif status_short in LIVE_STATUSES:
-        status = "IN_PLAY"
-    else:
-        status = "SCHEDULED"
-
-    # Score players predict = the 90-minute full-time score (ignore extra time / pens).
-    full_time = (item.get("score") or {}).get("fulltime") or {}
-    goals = item.get("goals") or {}
-    home_score = full_time.get("home") if full_time.get("home") is not None else goals.get("home")
-    away_score = full_time.get("away") if full_time.get("away") is not None else goals.get("away")
-    if status != "FINISHED":
-        home_score = away_score = None
-
-    matchday, group_label = _round_info(league_id, competition, (item.get("league") or {}).get("round", ""))
-
-    return {
-        "id": int(fixture["id"]),
-        "competition": competition,
-        "matchday": matchday,
-        "group_label": group_label,
-        "home": _display_name(home["name"]),
-        "away": _display_name(away["name"]),
-        "kickoff_utc": _to_utc_iso(date),
-        "status": status,
-        "home_score": home_score,
-        "away_score": away_score,
-    }
-
-
-def _round_info(league_id: int, competition: str, round_str: str) -> tuple[Optional[int], str]:
-    """Premier League -> ('Week N'); cups -> ('{Competition} · {Round}')."""
-    if league_id == 39:
-        match = re.search(r"(\d+)", round_str or "")
-        if match:
-            md = int(match.group(1))
-            return md, f"Week {md}"
-        return None, competition
-    tidy = (round_str or "").strip() or "Cup tie"
-    return None, f"{competition} · {tidy}"
 
 
 def is_finished(fixture: dict[str, Any]) -> bool:

@@ -26,6 +26,19 @@ def load_json(path: Path) -> Any:
         return json.load(handle)
 
 
+def merge_manual(fixtures: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Overlay data/manual_fixtures.json: cup games + score corrections (override by id)."""
+    path = ROOT / "data" / "manual_fixtures.json"
+    if not path.exists():
+        return fixtures
+    data = load_json(path)
+    manual = data.get("fixtures", []) if isinstance(data, dict) else (data or [])
+    by_id = {f["id"]: f for f in fixtures}
+    for entry in manual:
+        by_id[entry["id"]] = entry  # manual entry adds a cup game or overrides a feed game
+    return sorted(by_id.values(), key=lambda f: f.get("kickoff_utc", ""))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", default="state.json")
@@ -42,12 +55,12 @@ def main() -> None:
         fixtures = load_json(Path(args.fixtures))
     else:
         fixtures = fetch_fixtures(
-            competition["tracked_team_ids"],
-            competition["competitions"],
-            competition["api_football_season"],
+            competition["tracked_tlas"],
             competition["window_start"],
             competition["window_end"],
         )
+
+    fixtures = merge_manual(fixtures)
 
     # Keep Supabase's fixture table (kickoffs/scores) current so the RPC lock works.
     if not test_mode:

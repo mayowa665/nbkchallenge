@@ -3,16 +3,7 @@
   "season_label": "2025/26",
   "window_start": "2025-12-11T00:00:00Z",
   "window_end": "2026-05-02T23:59:59Z",
-
-  "api_football_season": 2025,
-  "tracked_team_ids": [33, 42, 55, 47],
-  "_tracked_team_ids_note": "API-Football team ids: 33 Man Utd, 42 Arsenal, 55 Brentford, 47 Spurs. Verify with: python scripts/check_apifootball.py",
-  "competitions": {
-    "39": "Premier League",
-    "45": "FA Cup",
-    "48": "Carabao Cup"
-  },
-
+  "tracked_tlas": ["MUN", "ARS", "BRE", "TOT"],
   "scoring": {
     "exact": 3,
     "result": 1,

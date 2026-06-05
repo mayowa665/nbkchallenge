@@ -30,11 +30,8 @@ jobs:
       - run: pip install -r requirements.txt
       - run: python -m compileall scripts
       - name: Recompute table
-        # Skip on plain code pushes (deploy the committed state.json); the API + Supabase
-        # are only hit on the daily cron and manual runs, to spare the football-data quota.
-        if: github.event_name != 'push'
         env:
-          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: python scripts/build_state.py --out state.json

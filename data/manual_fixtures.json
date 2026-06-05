@@ -1,0 +1,21 @@
+{
+  "_README": "Cup games (FA Cup / Carabao) and manual score corrections live here, because no free feed covers English cups. Add entries to the 'fixtures' list below.",
+  "_how_to": [
+    "BEFORE a cup tie (so players can predict it): add it with \"status\": \"SCHEDULED\" and null scores. Add it a few days ahead.",
+    "AFTER it is played: set \"status\": \"FINISHED\" and fill home_score / away_score.",
+    "To CORRECT a Premier League score the feed got wrong: add an entry whose \"id\" is that game's id — it overrides the feed.",
+    "id: any unique whole number >= 9000000 for cup games. home/away: the display names you want shown (e.g. Spurs, Man Utd, Liverpool). group_label: the scorecard heading."
+  ],
+  "_example": {
+    "id": 9000001,
+    "competition": "Carabao Cup",
+    "group_label": "Carabao Cup · Quarter-finals",
+    "home": "Spurs",
+    "away": "Liverpool",
+    "kickoff_utc": "2025-12-17T19:45:00Z",
+    "status": "FINISHED",
+    "home_score": 2,
+    "away_score": 1
+  },
+  "fixtures": []
+}
