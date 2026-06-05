@@ -122,6 +122,10 @@ $$;
 -- picks can't be scraped before kickoff. The Action uses the service role, which
 -- bypasses RLS, to read all predictions and write fixtures.
 -- ---------------------------------------------------------------------------
+-- app_config holds the PIN hash: enable RLS with NO policies so anon/authenticated
+-- keys cannot read it at all. The SECURITY DEFINER functions still can (they run as
+-- the owner and bypass RLS).
+alter table public.app_config  enable row level security;
 alter table public.fixtures    enable row level security;
 alter table public.predictions enable row level security;
 
