@@ -5,8 +5,10 @@ Each match object carries name/shortName/tla for both teams; we track teams by t
 FIFA-style `tla` (MUN/ARS/BRE/TOT), which is the stable identifier the feed provides.
 """
 
+import json
 import os
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Optional
 
 import requests
@@ -14,14 +16,25 @@ import requests
 PL_MATCHES_URL = "https://api.football-data.org/v4/competitions/PL/matches"
 LIVE_STATUSES = {"IN_PLAY", "PAUSED", "LIVE", "SUSPENDED"}
 
+# Preferred display names by FIFA tla (edit data/display_names.json to taste).
+_NAMES_PATH = Path(__file__).resolve().parents[1] / "data" / "display_names.json"
+try:
+    DISPLAY_NAMES = json.loads(_NAMES_PATH.read_text(encoding="utf-8"))
+except Exception:  # noqa: BLE001
+    DISPLAY_NAMES = {}
+
 
 def _parse_iso(value: str) -> datetime:
     return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
 def _display_name(team: dict[str, Any]) -> str:
-    # shortName is the cleanest ("Man United", "Arsenal", "Spurs"); fall back to name.
-    return team.get("shortName") or team.get("name") or team.get("tla") or "?"
+    # Prefer our colloquial override (Spurs, Wolves, Man Utd, ...) keyed by tla;
+    # otherwise the feed's shortName, then full name.
+    tla = (team.get("tla") or "").upper()
+    if tla in DISPLAY_NAMES:
+        return DISPLAY_NAMES[tla]
+    return team.get("shortName") or team.get("name") or tla or "?"
 
 
 def fetch_fixtures(

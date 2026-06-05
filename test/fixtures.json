@@ -1,6 +1,6 @@
 [
-  {"id": 1, "matchday": 17, "home": "Wolverhampton", "away": "Tottenham", "home_tla": "WOL", "away_tla": "TOT", "kickoff_utc": "2020-12-13T15:00:00Z", "status": "FINISHED", "home_score": 1, "away_score": 2},
+  {"id": 1, "matchday": 17, "home": "Wolves", "away": "Spurs", "home_tla": "WOL", "away_tla": "TOT", "kickoff_utc": "2020-12-13T15:00:00Z", "status": "FINISHED", "home_score": 1, "away_score": 2},
   {"id": 2, "matchday": 17, "home": "Arsenal", "away": "Newcastle", "home_tla": "ARS", "away_tla": "NEW", "kickoff_utc": "2020-12-13T17:30:00Z", "status": "FINISHED", "home_score": 3, "away_score": 0},
-  {"id": 3, "matchday": 17, "home": "Man United", "away": "Brentford", "home_tla": "MUN", "away_tla": "BRE", "kickoff_utc": "2020-12-14T20:00:00Z", "status": "FINISHED", "home_score": 2, "away_score": 2},
-  {"id": 4, "matchday": 18, "home": "Tottenham", "away": "Man United", "home_tla": "TOT", "away_tla": "MUN", "kickoff_utc": "2030-01-01T15:00:00Z", "status": "SCHEDULED", "home_score": null, "away_score": null}
+  {"id": 3, "matchday": 17, "home": "Man Utd", "away": "Brentford", "home_tla": "MUN", "away_tla": "BRE", "kickoff_utc": "2020-12-14T20:00:00Z", "status": "FINISHED", "home_score": 2, "away_score": 2},
+  {"id": 4, "matchday": 18, "home": "Spurs", "away": "Man Utd", "home_tla": "TOT", "away_tla": "MUN", "kickoff_utc": "2030-01-01T15:00:00Z", "status": "SCHEDULED", "home_score": null, "away_score": null}
 ]
