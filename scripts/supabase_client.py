@@ -1,9 +1,14 @@
 """Minimal Supabase REST (PostgREST) client for the GitHub Action.
 
-Uses the service-role key (a GitHub secret), which bypasses Row Level Security, to
-upsert fixtures and read every player's predictions. Plain `requests` — no SDK.
+Uses the service key (a GitHub secret), which bypasses Row Level Security, to upsert
+fixtures and read every player's predictions. Plain `requests` — no SDK.
 
-If SUPABASE_URL / SUPABASE_SERVICE_KEY are unset, fixtures upsert is a no-op and
+Header note: the new-style keys (`sb_secret_…` / `sb_publishable_…`) must be sent in
+the `apikey` header ONLY — if they're also placed in `Authorization: Bearer`, the
+platform tries to parse them as a JWT and rejects the request (403). The legacy
+`eyJ…` JWT keys, on the other hand, DO need the Bearer header to convey the role.
+
+If SUPABASE_URL / SUPABASE_SERVICE_KEY are unset, fixtures upsert is a no-op and the
 predictions read returns [], so the pipeline still runs locally without Supabase.
 """
 
@@ -21,12 +26,12 @@ def _config() -> tuple[str, str] | None:
     return url.rstrip("/"), key
 
 
-def _headers(key: str) -> dict[str, str]:
-    return {
-        "apikey": key,
-        "Authorization": f"Bearer {key}",
-        "Content-Type": "application/json",
-    }
+def _auth_headers(key: str) -> dict[str, str]:
+    headers = {"apikey": key}
+    # Only legacy JWT keys go in the Authorization header. New sb_* keys must not.
+    if not key.startswith("sb_"):
+        headers["Authorization"] = f"Bearer {key}"
+    return headers
 
 
 def upsert_fixtures(fixtures: list[dict[str, Any]]) -> None:
@@ -47,7 +52,8 @@ def upsert_fixtures(fixtures: list[dict[str, Any]]) -> None:
         }
         for f in fixtures
     ]
-    headers = _headers(key)
+    headers = _auth_headers(key)
+    headers["Content-Type"] = "application/json"
     headers["Prefer"] = "resolution=merge-duplicates,return=minimal"
     response = requests.post(
         f"{url}/rest/v1/fixtures?on_conflict=id",
@@ -59,14 +65,14 @@ def upsert_fixtures(fixtures: list[dict[str, Any]]) -> None:
 
 
 def read_predictions() -> list[dict[str, Any]]:
-    """All predictions (service role bypasses RLS). [] if Supabase isn't configured."""
+    """All predictions (service key bypasses RLS). [] if Supabase isn't configured."""
     cfg = _config()
     if cfg is None:
         return []
     url, key = cfg
     response = requests.get(
         f"{url}/rest/v1/predictions",
-        headers={"apikey": key, "Authorization": f"Bearer {key}"},
+        headers=_auth_headers(key),
         params={"select": "player,fixture_id,home_pred,away_pred,updated_at"},
         timeout=30,
     )
