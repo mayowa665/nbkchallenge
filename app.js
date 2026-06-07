@@ -178,6 +178,20 @@ function predictView() {
 }
 
 function wirePredict() {
+  // Switching player wipes the boxes so you never see the previous person's picks.
+  // Pure UI — wire it regardless of whether Supabase has loaded yet.
+  const playerSel = document.getElementById("player");
+  if (playerSel) {
+    playerSel.addEventListener("change", () => {
+      document.querySelectorAll(".pred-row").forEach(row => {
+        row.querySelector(".ph").value = "";
+        row.querySelector(".pa").value = "";
+      });
+      const msg = document.getElementById("predMsg");
+      if (msg) { msg.className = "msg"; msg.textContent = ""; }
+    });
+  }
+
   const loadBtn = document.getElementById("loadBtn");
   const saveBtn = document.getElementById("saveBtn");
   if (!loadBtn || !db) return;
@@ -191,9 +205,13 @@ function wirePredict() {
     if (error) { msg.className = "msg err"; msg.textContent = error.message || "Couldn't load."; return; }
     const byId = Object.fromEntries((data || []).map(d => [d.fixture_id, d]));
     let filled = 0;
+    // Reset every box first, so a player with no saved pick shows empty (not the
+    // previous player's numbers), then fill in only this player's saved picks.
     document.querySelectorAll(".pred-row").forEach(row => {
       const d = byId[Number(row.dataset.fixture)];
-      if (d) { row.querySelector(".ph").value = d.home_pred; row.querySelector(".pa").value = d.away_pred; filled++; }
+      row.querySelector(".ph").value = d ? d.home_pred : "";
+      row.querySelector(".pa").value = d ? d.away_pred : "";
+      if (d) filled++;
     });
     msg.className = "msg ok"; msg.textContent = filled ? `Loaded ${filled} saved pick(s).` : "No saved picks for upcoming games.";
   });
