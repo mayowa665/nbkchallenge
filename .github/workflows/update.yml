@@ -30,7 +30,11 @@ jobs:
       - run: pip install -r requirements.txt
       - run: python -m compileall scripts
       - name: Recompute table
-        run: python scripts/build_scorecard_state.py --out state.json
+        env:
+          FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/build_state.py --out state.json
       - name: Stage static site
         run: |
           mkdir _site
