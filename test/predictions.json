@@ -1,17 +1,17 @@
 [
-  {"player": "Mayowa", "fixture_id": 1, "home_pred": 1, "away_pred": 2, "updated_at": "2020-12-12T10:00:00Z"},
-  {"player": "Mayowa", "fixture_id": 2, "home_pred": 3, "away_pred": 0, "updated_at": "2020-12-12T10:00:00Z"},
-  {"player": "Mayowa", "fixture_id": 3, "home_pred": 2, "away_pred": 2, "updated_at": "2020-12-12T10:00:00Z"},
-  {"player": "Mayowa", "fixture_id": 5, "home_pred": 2, "away_pred": 0, "updated_at": "2020-12-16T10:00:00Z"},
-  {"player": "Mayowa", "fixture_id": 4, "home_pred": 2, "away_pred": 0, "updated_at": "2020-12-12T10:00:00Z"},
+  {"player": "Mayowa", "fixture_id": 1, "home_pred": 2, "away_pred": 1, "updated_at": "2020-06-10T10:00:00Z"},
+  {"player": "Mayowa", "fixture_id": 2, "home_pred": 0, "away_pred": 1, "updated_at": "2020-06-10T10:00:00Z"},
+  {"player": "Mayowa", "fixture_id": 3, "home_pred": 3, "away_pred": 0, "updated_at": "2020-06-10T10:00:00Z"},
+  {"player": "Mayowa", "fixture_id": 4, "home_pred": 1, "away_pred": 1, "updated_at": "2020-06-10T10:00:00Z"},
+  {"player": "Mayowa", "fixture_id": 5, "home_pred": 1, "away_pred": 1, "updated_at": "2020-06-10T10:00:00Z"},
 
-  {"player": "Con", "fixture_id": 1, "home_pred": 0, "away_pred": 1, "updated_at": "2020-12-12T10:00:00Z"},
-  {"player": "Con", "fixture_id": 2, "home_pred": 1, "away_pred": 0, "updated_at": "2020-12-12T10:00:00Z"},
-  {"player": "Con", "fixture_id": 3, "home_pred": 0, "away_pred": 0, "updated_at": "2020-12-12T10:00:00Z"},
-  {"player": "Con", "fixture_id": 5, "home_pred": 1, "away_pred": 0, "updated_at": "2020-12-16T10:00:00Z"},
+  {"player": "Con", "fixture_id": 1, "home_pred": 1, "away_pred": 0, "updated_at": "2020-06-10T10:00:00Z"},
+  {"player": "Con", "fixture_id": 2, "home_pred": 0, "away_pred": 2, "updated_at": "2020-06-10T10:00:00Z"},
+  {"player": "Con", "fixture_id": 3, "home_pred": 2, "away_pred": 1, "updated_at": "2020-06-10T10:00:00Z"},
+  {"player": "Con", "fixture_id": 4, "home_pred": 2, "away_pred": 2, "updated_at": "2020-06-10T10:00:00Z"},
 
-  {"player": "Harris (NBK)", "fixture_id": 1, "home_pred": 0, "away_pred": 2, "updated_at": "2020-12-12T10:00:00Z"},
-  {"player": "Harris (NBK)", "fixture_id": 2, "home_pred": 2, "away_pred": 1, "updated_at": "2020-12-12T10:00:00Z"},
-  {"player": "Harris (NBK)", "fixture_id": 3, "home_pred": 1, "away_pred": 0, "updated_at": "2020-12-12T10:00:00Z"},
-  {"player": "Harris (NBK)", "fixture_id": 5, "home_pred": 0, "away_pred": 0, "updated_at": "2020-12-16T10:00:00Z"}
+  {"player": "Harris (NBK)", "fixture_id": 1, "home_pred": 0, "away_pred": 1, "updated_at": "2020-06-10T10:00:00Z"},
+  {"player": "Harris (NBK)", "fixture_id": 2, "home_pred": 1, "away_pred": 1, "updated_at": "2020-06-10T10:00:00Z"},
+  {"player": "Harris (NBK)", "fixture_id": 3, "home_pred": 1, "away_pred": 0, "updated_at": "2020-06-10T10:00:00Z"},
+  {"player": "Harris (NBK)", "fixture_id": 4, "home_pred": 1, "away_pred": 0, "updated_at": "2020-06-10T10:00:00Z"}
 ]

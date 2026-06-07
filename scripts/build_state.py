@@ -55,6 +55,8 @@ def main() -> None:
         fixtures = load_json(Path(args.fixtures))
     else:
         fixtures = fetch_fixtures(
+            competition.get("football_data_competition", "PL"),
+            competition.get("competition_label", "Premier League"),
             competition["tracked_tlas"],
             competition["window_start"],
             competition["window_end"],

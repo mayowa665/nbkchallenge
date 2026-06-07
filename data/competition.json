@@ -1,9 +1,11 @@
 {
-  "name": "NBK League",
-  "season_label": "2025/26",
-  "window_start": "2025-12-11T00:00:00Z",
-  "window_end": "2026-05-02T23:59:59Z",
-  "tracked_tlas": ["MUN", "ARS", "BRE", "TOT"],
+  "name": "NBK World Cup",
+  "season_label": "World Cup 2026",
+  "football_data_competition": "WC",
+  "competition_label": "World Cup",
+  "window_start": "2026-06-11T00:00:00Z",
+  "window_end": "2026-07-19T23:59:59Z",
+  "tracked_tlas": ["ENG", "SCO", "FRA", "SEN"],
   "scoring": {
     "exact": 3,
     "result": 1,

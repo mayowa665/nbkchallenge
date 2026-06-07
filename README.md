@@ -26,6 +26,8 @@ override a Premier League score the feed gets wrong.
 pip install -r requirements.txt
 # Offline run using the sample data (no API key / Supabase needed):
 python scripts/build_state.py --out state.json --fixtures test/fixtures.json --predictions test/predictions.json
+# Backfill from parsed WhatsApp scorecards and the public Supabase PL fixtures:
+python scripts/build_scorecard_state.py --out state.json
 python -m http.server 8139
 ```
 Open `http://localhost:8139`. A live run (no `--fixtures`) needs `FOOTBALL_DATA_API_KEY`

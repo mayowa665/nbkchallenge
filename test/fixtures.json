@@ -1,7 +1,7 @@
 [
-  {"id": 1, "competition": "Premier League", "group_label": "Week 17", "matchday": 17, "home": "Wolves", "away": "Spurs", "kickoff_utc": "2020-12-13T15:00:00Z", "status": "FINISHED", "home_score": 1, "away_score": 2},
-  {"id": 2, "competition": "Premier League", "group_label": "Week 17", "matchday": 17, "home": "Arsenal", "away": "Newcastle", "kickoff_utc": "2020-12-13T17:30:00Z", "status": "FINISHED", "home_score": 3, "away_score": 0},
-  {"id": 3, "competition": "Premier League", "group_label": "Week 17", "matchday": 17, "home": "Man Utd", "away": "Brentford", "kickoff_utc": "2020-12-14T20:00:00Z", "status": "FINISHED", "home_score": 2, "away_score": 2},
-  {"id": 5, "competition": "Carabao Cup", "group_label": "Carabao Cup · Quarter-finals", "matchday": null, "home": "Arsenal", "away": "Brentford", "kickoff_utc": "2020-12-17T20:00:00Z", "status": "FINISHED", "home_score": 2, "away_score": 0},
-  {"id": 4, "competition": "FA Cup", "group_label": "FA Cup · 4th Round", "matchday": null, "home": "Spurs", "away": "Man Utd", "kickoff_utc": "2030-01-10T15:00:00Z", "status": "SCHEDULED", "home_score": null, "away_score": null}
+  {"id": 1, "competition": "World Cup", "group_label": "Matchday 1", "matchday": 1, "home": "England", "away": "Croatia", "kickoff_utc": "2020-06-11T19:00:00Z", "status": "FINISHED", "home_score": 2, "away_score": 1},
+  {"id": 2, "competition": "World Cup", "group_label": "Matchday 1", "matchday": 1, "home": "Scotland", "away": "Brazil", "kickoff_utc": "2020-06-12T17:00:00Z", "status": "FINISHED", "home_score": 0, "away_score": 1},
+  {"id": 3, "competition": "World Cup", "group_label": "Matchday 1", "matchday": 1, "home": "France", "away": "Iraq", "kickoff_utc": "2020-06-12T20:00:00Z", "status": "FINISHED", "home_score": 3, "away_score": 0},
+  {"id": 4, "competition": "World Cup", "group_label": "Matchday 1", "matchday": 1, "home": "Senegal", "away": "Norway", "kickoff_utc": "2020-06-13T15:00:00Z", "status": "FINISHED", "home_score": 1, "away_score": 1},
+  {"id": 5, "competition": "World Cup", "group_label": "Matchday 2", "matchday": 2, "home": "France", "away": "Senegal", "kickoff_utc": "2030-06-17T19:00:00Z", "status": "SCHEDULED", "home_score": null, "away_score": null}
 ]

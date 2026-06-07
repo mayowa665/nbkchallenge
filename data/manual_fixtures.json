@@ -1,18 +1,16 @@
 {
-  "_README": "Cup games (FA Cup / Carabao) and manual score corrections live here, because no free feed covers English cups. Add entries to the 'fixtures' list below.",
+  "_README": "Manual fixtures / score corrections. The World Cup is fully covered by football-data, so you normally won't need this — but you can add an entry here to override a wrong score, or add a game the feed is missing.",
   "_how_to": [
-    "BEFORE a cup tie (so players can predict it): add it with \"status\": \"SCHEDULED\" and null scores. Add it a few days ahead.",
-    "AFTER it is played: set \"status\": \"FINISHED\" and fill home_score / away_score.",
-    "To CORRECT a Premier League score the feed got wrong: add an entry whose \"id\" is that game's id — it overrides the feed.",
-    "id: any unique whole number >= 9000000 for cup games. home/away: the display names you want shown (e.g. Spurs, Man Utd, Liverpool). group_label: the scorecard heading."
+    "To CORRECT a score: add an entry whose \"id\" is that game's football-data id — it overrides the feed.",
+    "To ADD a missing game: use a unique whole number id >= 9000000, set home/away display names, kickoff_utc, status, scores, competition and group_label."
   ],
   "_example": {
     "id": 9000001,
-    "competition": "Carabao Cup",
-    "group_label": "Carabao Cup · Quarter-finals",
-    "home": "Spurs",
-    "away": "Liverpool",
-    "kickoff_utc": "2025-12-17T19:45:00Z",
+    "competition": "World Cup",
+    "group_label": "Round of 16",
+    "home": "England",
+    "away": "France",
+    "kickoff_utc": "2026-07-04T19:00:00Z",
     "status": "FINISHED",
     "home_score": 2,
     "away_score": 1
